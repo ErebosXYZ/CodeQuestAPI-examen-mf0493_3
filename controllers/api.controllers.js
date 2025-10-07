@@ -23,7 +23,7 @@ const { generateQuestions, getRandomQuestionsDB } = require('../services/questio
  */
 const getRandomQuestions = async (req, res) => {
 	try {
-		let { amount } = req.query;
+		let { amount, difficulty } = req.query;
 		amount = parseInt(amount, 10);
 
 		//validation of amount
@@ -33,7 +33,12 @@ const getRandomQuestions = async (req, res) => {
 			amount = 30;
 		}
 
-		const randomQuestion = await getRandomQuestionsDB(amount);
+		let filter = {};
+		if (difficulty && typeof difficulty === "string" && ["easy", "medium", "hard"].includes(difficulty.toLowerCase())) {
+			filter.difficulty = difficulty.toLowerCase();
+		}
+
+		const randomQuestion = await getRandomQuestionsDB(amount, filter);
 		
 
 		res.status(200).json({
